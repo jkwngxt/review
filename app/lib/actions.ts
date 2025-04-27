@@ -75,7 +75,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
 
 const UpdateInvoice = FormSchema.omit({ id: true, date: true });
 
-export async function updateInvoice(id: string, prevState:State, formData: FormData) {
+export async function updateInvoice(id: string, prevState: State, formData: FormData) {
     const validatedFields = UpdateInvoice.safeParse({
         customerId: formData.get('customerId'),
         amount: formData.get('amount'),
@@ -89,7 +89,7 @@ export async function updateInvoice(id: string, prevState:State, formData: FormD
         };
     }
 
-    const { amount, customerId, status} = validatedFields.data
+    const { amount, customerId, status } = validatedFields.data
 
     const amountInCents = amount * 100;
 
@@ -124,18 +124,17 @@ export async function deleteInvoice(id: string) {
 export async function authenticate(
     prevState: string | undefined,
     formData: FormData,
-  ) {
+) {
     try {
-      await signIn('credentials', formData);
+        await signIn('credentials', formData);
     } catch (error) {
-      if (error instanceof AuthError) {
-        switch (error.type) {
-          case 'CredentialsSignin':
-            return 'Invalid credentials.';
-          default:
+        if (error instanceof AuthError) {
+            if (error.message === 'CredentialsSignin') {
+                return 'Invalid credentials.';
+            }
             return 'Something went wrong.';
         }
-      }
-      throw error;
+
+        throw error;
     }
-  }
+}
